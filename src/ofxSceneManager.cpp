@@ -10,22 +10,23 @@
 #include "ofxSceneManager.h"
 
 void ofxSceneManager::run() {
-    _fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
-    _nextFbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
-    
-    _fbo.begin();
+    if(_isFboActive) {
+        _fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
+        _nextFbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
+    }
+    if(_isFboActive) { _fbo.begin(); }
     ofClear(255, 255, 255, 0);
-    _fbo.end();
-    
-    _nextFbo.begin();
+    if(_isFboActive) { _fbo.end(); }
+
+    if(_isFboActive) { _nextFbo.begin(); }
     ofClear(255, 255, 255, 0);
-    _nextFbo.end();
-    
+    if(_isFboActive) { _nextFbo.end(); }
+
     ofPtr<ofxScene> previousScene;
     previousScene = _currentScene;
     _currentScene = scenes.at(_sceneIndex);
     _currentScene->setupScene(previousScene);
-    
+
     // Events
     ofAddListener(ofEvents().keyPressed, this, &ofxSceneManager::_keyPressed);
     ofAddListener(ofEvents().keyReleased, this, &ofxSceneManager::_keyReleased);
@@ -47,24 +48,24 @@ void ofxSceneManager::update() {
 
 void ofxSceneManager::draw() {
     if (transition == TRANSITION_DISSOLVE && _isInTransition) {
-        _nextFbo.begin();
+        if(_isFboActive) { _nextFbo.begin(); }
         _nextScene->drawScene();
-        _nextFbo.end();
+        if(_isFboActive) { _nextFbo.end(); }
     }
 
-    _fbo.begin();
+    if(_isFboActive) { _fbo.begin(); }
     _currentScene->drawScene();
-    _fbo.end();
-    
+    if(_isFboActive) { _fbo.end(); }
+
     ofPushStyle();
     ofSetColor(255, 255, 255, _currentScene->getSceneAlpha());
-    _fbo.draw(0, 0);
+    if(_isFboActive) { _fbo.draw(0, 0); }
     ofPopStyle();
 
     if (transition == TRANSITION_DISSOLVE && _isInTransition) {
         ofPushStyle();
         ofSetColor(255, 255, 255, _nextScene->getSceneAlpha());
-        _nextFbo.draw(0, 0);
+        if(_isFboActive) { _nextFbo.draw(0, 0); }
         ofPopStyle();
     }
 }
@@ -84,7 +85,7 @@ void ofxSceneManager::changeScene(int sceneIndex) {
 void ofxSceneManager::addScene(ofPtr<ofxScene> pScene) {
     ofAddListener(pScene->startFadingInEvent, this, &ofxSceneManager::_onStartFadingIn);
     ofAddListener(pScene->startDrawingEvent, this, &ofxSceneManager::_onStartDrawing);
-    ofAddListener(pScene->finishedDrawingEvent, this, &ofxSceneManager::_onFinishedDrawing);    
+    ofAddListener(pScene->finishedDrawingEvent, this, &ofxSceneManager::_onFinishedDrawing);
     ofAddListener(pScene->startFadingOutEvent, this, &ofxSceneManager::_onStartFadingOut);
     ofAddListener(pScene->finishSceneEvent, this, &ofxSceneManager::_onFinishScene);
     scenes.push_back(pScene);

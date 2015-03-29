@@ -19,7 +19,7 @@ enum ofxSmTransition{
 class ofxSceneManager {
 public:
     void run();
-    
+
     void update();
     void draw();
 
@@ -30,7 +30,7 @@ public:
 
     void setExitByTime(bool b);
     void setSceneDuration(float fadeInSec, float fadeOutSec);
-    void setSceneDuration(float fadeInSec, float drawingSec, float fadeOutSec);  
+    void setSceneDuration(float fadeInSec, float drawingSec, float fadeOutSec);
     void setTransitionFade();
     void setTransitionDissolve();
 
@@ -39,22 +39,24 @@ public:
  private:
     int _sceneIndex = 0;
     int _nextSceneIndex;
-    
+
     ofPtr<ofxScene> _currentScene;
     ofPtr<ofxScene> _nextScene;
 
     ofFbo _fbo;
     ofFbo _nextFbo;
-    
+
     ofxSmTransition transition = TRANSITION_FADE;
     bool _isInTransition = false;
-    
+
+    bool _isFboActive = false;
+
     void _onStartFadingIn(bool &b);
     void _onStartDrawing(bool &b);
-    void _onFinishedDrawing(bool &b);    
+    void _onFinishedDrawing(bool &b);
     void _onStartFadingOut(bool &b);
     void _onFinishScene(bool &b);
-    
+
     void _keyPressed(ofKeyEventArgs & args);
     void _keyReleased(ofKeyEventArgs & args);
     void _mouseMoved(ofMouseEventArgs & args);
