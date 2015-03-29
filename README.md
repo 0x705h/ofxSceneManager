@@ -4,6 +4,9 @@ A lightweight addon for openFrameworks supporting crossfading, data passing and 
 
 You can write your own scenes just like ofApp!
 
+Note on this fork: This fork disables fbo calls by default on class level. 
+This as this date, is the only modification to the original code.
+
 ## Dependency
 
 - ofxTween (https://github.com/arturoc/ofxTween)
